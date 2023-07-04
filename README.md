@@ -1,10 +1,10 @@
 # NEASQC repo Variational Algorithms
 
-This repository collects Python scripts and Jupyter notebooks that allow the user to test different variational algorithms. It contains our custom functions (e.g. VHA ansatz, PBO Hamiltonian)
-that are built upon Qiskit libraries.
+This repository collects Python scripts and Jupyter notebooks that allow the user to test different variational algorithms. 
+It contains our custom functions (e.g. VHA ansatz, PBO Hamiltonian) that are built upon Qiskit libraries, as well as method to reduce number of measurement and noise.
 
 The repository is organized as follows:
-- **misc**:  contains the notebooks and scripts that showcase the variational algorithms
+- **misc**:  contains the notebooks and python scripts that showcase the variational algorithms as well as enhanced sampling method.
 - **qiskit_mod**: contains our custom functions that are built upon Qiskit libraries as well as the QLM custom junction and helpers:
     - **qiskit_nat**: the customize function built upon qiskit_nature
     - **qiskit_ter**: the customize function built upon qiskit_terra
@@ -12,6 +12,8 @@ The repository is organized as follows:
     - *uploader_junction.py*: helper to upload the junction to the QLMaaS server so that it can be found in the remote library
     - *wrapper2myqlm.py*: helper to wrap the variational algorithms using QLM stack
 - **tests**: unit tests for the variational algorithms
+- **enhanced_sampling**: contains the class for Enhanced Sampling: a sampling methods that uses Bayesian inference to reduce the number of measurement
+- **n-rep_projection** : contains the method and an example for an algorithm to reduces quantum computation noise via constrained projections of density matrices.
 - **QLMtools**: additional tools to upload qiskit_mod to the QLMaaS server
     - *uploader_library.py*: helper to upload the qiskit_mod library to the QLMaaS server
 - *create_conda_env.sh*: script to create a Conda environment with all required libraries
@@ -24,7 +26,7 @@ The `LICENCE` file contains the default licence statement as specified in the pr
 ## Building and installing
 
 To run the code in the repo a setup to build the Conda environment is provided. 
-It installs python 3.9, qiskit libraries, and our two qiskit mods on top of the following library: qiskit-nature and qiskit-terra.
+It installs python 3.9, openfermions, openfermionpyscf, qiskit libraries, and our two qiskit mods on top of the following library: qiskit-nature and qiskit-terra.
 These two repos are modified to include additional functionalities not present in the standard qiskit libraries.
 Additionally, the Conda environment installs QLM libraries necessary to use QLM QPUs as backends.
 
@@ -40,6 +42,30 @@ Instead, token-based authentication (for example SSH Key) is required for all au
 You can find the Jupyter notebook and python scripts in the **misc** folder.
 Use the Conda environment provided to run the code.
 
+
+## Enhanced Sampling
+In this repo, we're exploring the simulation of quantum circuits using enhanced sampling methods that uses Bayesian inference to reduce the number of measurement, the algorithm is taken from [Minimizing estimation runtime on noisy quantum computers](https://arxiv.org/abs/2006.09350). The goal is to estimate the expectation values of a Hamiltonian operator on a given quantum state, which is a common task in many quantum algorithms.
+
+We implement the non-adaptive version of the algorithm outlined in the paper to carry out Bayesian inference. The reasoning for the using the non-adaptive is to have a much faster algorithm where the parameters of the ansatz circuit are not-updated at every shot.
+
+In the folder misc/notebook/ one can find an example of the algorithm in the notebook EnhancedSamplingExample.ipynb. In it, a generic hamiltonian is built to be used to compare the energy evaluation on a SU2 ansatz using the algorithm outlined (enhanced sampling) vs the more traditional approac (frequentist).
+
+![Frequentist vs Enhanced schema](doc/SamplingSchema.png)
+
+
+## N-rep projection
+In the repo we include an algorithm designed to mitigate the impact of decoherence and shot noise in quantum computations carried out on Noisy Intermediate-Scale Quantum (NISQ) devices.
+The algorithm utilizes the Reduced Density Matrices (RDMs) of the system, which are typically distorted by noise, and projects them into a constrained space where they preserve specific conditions: having a fixed trace (corresponding to the number of electrons/holes in the system) and being positive semi-definite.
+
+The energy of the system, given by the expectation value of the Hamiltonian, is calculated using one- and two-electron integrals, the energy offset, as well as one- and two-particle RDMs. The algorithm considers that due to decoherence, the computed energy is likely higher than the actual ground state energy.
+
+To resolve this, the algorithm projects RDMs into the closest space adhering to the conditions mentioned above. These projections can be done not just in the particle sector but also in the hole and particle-hole sectors, using one- and two-hole RDMs or the particle-hole RDM. The algorithm performs all three types of projections and returns the one that yields the lowest energy value when transformed back into the particle sector.
+
+For a comprehensive understanding of the physics behind the algorithm and its performance, please refer to the associated research paper: Tomislav Piskor, Florian G. Eich, Michael Marthaler, Frank K. Wilhelm, Jan-Michael Reiner,Post-processing noisy quantum computations utilizing N-representability constraints,arXiv: 2304.13401 [quant-ph] (2023). You can find it [here](https://arxiv.org/abs/2304.13401 ).
+
+
+## Analyze formation of a benzene-C02.
+In the folder benzene-C02, it can be found a python script that contain a function to calculate the ground state energy of a benzene + CO2 system.
 
 ## QLM interoperability explained
 The code in the repository is mainly written using the Qiskit library. To be able to run the circuits onto QLM quantum processing units (QPUs), we integrated the myqlm-interop library which enables the conversion of Qiskit circuits to QLM circuits (as well as the opposite).
