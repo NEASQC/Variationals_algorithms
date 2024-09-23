@@ -1,6 +1,6 @@
 # NEASQC repo Variational Algorithms
 
-This repository collects Python scripts and Jupyter notebooks that allow the user to test different variational algorithms. 
+This repository collects Python scripts and Jupyter notebooks that allow the user to test different methods for quantum computing. 
 It contains our custom functions (e.g. VHA ansatz, PBO Hamiltonian) that are built upon Qiskit libraries, as well as method to reduce number of measurement and noise.
 
 The repository is organized as follows:
@@ -19,8 +19,11 @@ The repository is organized as follows:
 - *create_conda_env.sh*: script to create a Conda environment with all required libraries
 - *environment.yml*: Conda environment file
 - *setup.py*: setup file to install the qiskit_mod library and with unit test recipe to run the unit tests
+- **classic_shadows**: a method derived from [Algorithmic Shadow Spectroscopy](https://arxiv.org/abs/2212.11036) for estimating energy gaps using few shots and no ancilla qubits.
+    - `TMB_Example_compact` is a notebook showcasing the method on a prepared quantum program (`quantum_program.json`). It uses only open-source libraries, specified in the notebook.
+    - `create_quantum_program.py` is the script creating the quantum program, but in order to run it the user need a free-license from `https://cloud.quantumsimulations.de/` to use the NoiseApp and Struqture.
+    - `qoqo_shadows` is the local python file that contains helper function built on top of qoqo library to run the classic shadow method.
 ## Licence
-
 The `LICENCE` file contains the default licence statement as specified in the proposal and partner agreement.
 
 ## Building and installing
@@ -34,10 +37,7 @@ To install the Conda environment and our qiskit_mod library, run the following c
 ```bash
 source create_conda_env.sh
 ```
-
-Also, keep in mind that recently Github password authentication has been deprecated and will no longer work.
-Instead, token-based authentication (for example SSH Key) is required for all authenticated Git operations.
-
+Note: for classic shadows the example notebook provide the list of libraries to install.
 ## Running the code
 You can find the Jupyter notebook and python scripts in the **misc** folder.
 Use the Conda environment provided to run the code.
@@ -81,6 +81,15 @@ The custom junction also modifies the function to get the energy evaluation (and
 The modification converts each circuit from Qiskit to MyQLM and takes care of the job submission in the QLM framework.
 
 Overall, this Qiskit-QLM integration allows us to choose which type of backend to use, and when combined with the QLMaaS server, enables this code to run for larger problems and molecules, which would not be possible using a simple laptop.
+
+## Classic Shadow
+
+Shadow spectroscopy is a quantum algorithm that estimates energy differences (gaps) in a system’s Hamiltonian by analyzing the time evolution of quantum states. This method complements traditional quantum phase estimation by leveraging classical shadows—a technique involving randomized measurements—to access a large set of observables that contain information about the energy spectrum. The key advantage of shadow spectroscopy is its relatively low quantum resource demands: no auxiliary qubits are required, and it is resilient to shot noise and gate errors prevalent in NISQ devices.
+
+In the folder `classic_shadows` a showcase implementation of this method is provided. Is based on HQS`s qoqo framework, and it is comprised of 2 parts:
+- A notebook that can be run using a pre-compiled quantum program using only free opensource libraries.
+- A script that create such quantum program, for which a free licences from HQS `https://cloud.quantumsimulations.de/` is needed in order to use the needed libraries: `hqs_noise_app` and `struqture`.
+
 
 ## Testing and continuous integration
 
