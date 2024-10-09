@@ -1,7 +1,16 @@
-# NEASQC repo Variational Algorithms
+# NEASQC repo Variational Algorithms and Measurement mitigation
 
-This repository collects Python scripts and Jupyter notebooks that allow the user to test different methods for quantum computing. 
-It contains our custom functions (e.g. VHA ansatz, PBO Hamiltonian) that are built upon Qiskit libraries, as well as method to reduce number of measurement and noise.
+This repository collects Python scripts and Jupyter notebooks that allow the user to try different methods for quantum computing.
+In particular it contains the following methods:
+- **Variational Algorithms**:
+    - VHA, Variational Hamiltonian Ansatz
+    - PBO Hamiltonian
+- **Quantum Measurement Mitigation**
+    - Enhanced Sampling: a sampling methods that uses Bayesian inference to reduce the number of measurement [Minimizing estimation runtime on noisy quantum computers](https://arxiv.org/abs/2006.09350).
+    - Classical Shadows: a method for estimating energy gaps using few shots and no ancilla qubits  [Algorithmic Shadow Spectroscopy](https://arxiv.org/abs/2212.11036).
+    - N-rep projection:  algorithm for mitigating decoherence and shot noise on NISQ devices by projecting noisy Reduced Density Matrices (RDMs) into a constrained space that enforces fixed trace and positive semi-definiteness [Post-processing noisy quantum computations utilizing N-representability constraints](https://arxiv.org/abs/2304.13401 ).
+ 
+It also contains various additionals scripts, explained in the following.
 
 The repository is organized as follows:
 - **misc**:  contains the notebooks and python scripts that showcase the variational algorithms as well as enhanced sampling method.
